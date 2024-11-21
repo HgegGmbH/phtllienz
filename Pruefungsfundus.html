@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRÜFUNGSFUNDUS</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap">
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link rel="icon" href="https://i.imgur.com/TSR8UzZ.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://i.imgur.com/TSR8UzZ.png" type="image/x-icon">
+
+    <style>
+        .checkbox-wrapper-4 * {
+            box-sizing: border-box;
+        }
+        .checkbox-wrapper-4 .cbx {
+            -webkit-user-select: none;
+            user-select: none;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .checkbox-wrapper-4 .cbx:not(:last-child) {
+            margin-right: 6px;
+        }
+        .checkbox-wrapper-4 .cbx:hover {
+            background: rgba(0,119,255,0.06);
+        }
+        .checkbox-wrapper-4 .cbx span {
+            float: left;
+            vertical-align: middle;
+            transform: translate3d(0, 0, 0);
+        }
+        .checkbox-wrapper-4 .cbx span:first-child {
+            position: relative;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            transform: scale(1);
+            border: 1px solid #cccfdb;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0,16,75,0.05);
+        }
+        .checkbox-wrapper-4 .cbx span:first-child svg {
+            position: absolute;
+            top: 3px;
+            left: 2px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 16px;
+            stroke-dashoffset: 16px;
+            transition: all 0.3s ease;
+            transition-delay: 0.1s;
+            transform: translate3d(0, 0, 0);
+        }
+        .checkbox-wrapper-4 .cbx span:last-child {
+            padding-left: 8px;
+            line-height: 18px;
+        }
+        .checkbox-wrapper-4 .cbx:hover span:first-child {
+            border-color: #07f;
+        }
+        .checkbox-wrapper-4 .inp-cbx {
+            position: absolute;
+            visibility: hidden;
+        }
+        .checkbox-wrapper-4 .inp-cbx:checked + .cbx span:first-child {
+            background: #07f;
+            border-color: #07f;
+            animation: wave-4 0.4s ease;
+        }
+        .checkbox-wrapper-4 .inp-cbx:checked + .cbx span:first-child svg {
+            stroke-dashoffset: 0;
+        }
+        .checkbox-wrapper-4 .inline-svg {
+            position: absolute;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+        @media screen and (max-width: 640px) {
+            .checkbox-wrapper-4 .cbx {
+            width: 100%;
+            display: inline-block;
+            }
+        }
+        @-moz-keyframes wave-4 {
+            50% {
+            transform: scale(0.9);
+            }
+        }
+        @-webkit-keyframes wave-4 {
+            50% {
+            transform: scale(0.9);
+            }
+        }
+        @-o-keyframes wave-4 {
+            50% {
+            transform: scale(0.9);
+            }
+        }
+        @keyframes wave-4 {
+            50% {
+            transform: scale(0.9);
+            }
+        }
+    </style>
+
+    
+</head>
+
+<script>
+    function e(name)
+    {
+        return document.getElementById(name);
+    }
+
+    function Show(element)
+    {
+        element.style.display = "block"
+    }
+
+    function Hide(element)
+    {
+        element.style.display = "none"
+    }
+
+    var DatabaseURL = "https://untmprivat-default-rtdb.europe-west1.firebasedatabase.app/";
+
+    const firebaseApp = firebase.initializeApp(
+    { 
+        apiKey: "AIzaSyCPn52UmQZaBGtOj-gYeT7oTVNxIeYIz6U",
+        authDomain: "untmprivat.firebaseapp.com",
+        databaseURL: "https://untmprivat-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "untmprivat",
+        storageBucket: "untmprivat.appspot.com",
+        messagingSenderId: "1027445748417",
+        appId: "1:1027445748417:web:b99ab46836ff2b4d67da40"
+    });
+
+    const db = firebaseApp.firestore();
+    const auth = firebaseApp.auth();
+
+    var database;
+    var dataRef;
+
+    var IstAngemeldet = false;
+
+    function InitWebseite(PasswortBenutzereingabe, AlsSchuelerAnmeldenParameter)
+    {        
+        var email = "";
+
+
+
+        if(AlsSchuelerAnmeldenParameter.toString() == "true")
+        {
+            email = "pruefungsfundus@untmprivat.com"
+        }
+        else
+        {
+            email = "username@untmprivat.com"
+        }
+
+        auth.signInWithEmailAndPassword(email, PasswortBenutzereingabe)
+        .then((userCredential) =>
+        {
+            console.log("Anmeldung erfolgreich:", userCredential.user.uid);            
+
+            database = firebase.database();
+            dataRef = database.ref();
+
+            IstAngemeldet = true;
+
+            document.getElementById("AnmeldungFenster").style.display = "none";
+
+            if(AlsSchuelerAnmeldenParameter.toString() == "true")
+            {
+                document.getElementById("GesamteWebseite").style.display = "block";
+            }
+            else
+            {
+                document.getElementById("HochladenSeite").style.display = "block";
+            }
+                           
+            document.getElementById("AnmeldungFehlgeschlagen").style.display = "none";
+
+            setCookie("PasswortPruefungsfundus", PasswortBenutzereingabe)
+            setCookie("PruefungsfundusAlsSchuelerAnmelden", e("AlsSchuelerAnmeldenCheckBox").checked)
+
+            Event_AnmeldungAbgeschlossen();
+        })
+        .catch((error) => 
+        {
+
+            console.log(error);
+            IstAngemeldet = false;
+
+            document.getElementById("AnmeldungFenster").style.display = "none";
+            document.getElementById("GesamteWebseite").style.display = "none";
+            document.getElementById("HochladenSeite").style.display = "none";
+            document.getElementById("AnmeldungFehlgeschlagen").style.display = "block";
+        });
+    }
+
+    function GetVariable(Pfad)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            dataRef.child(Pfad).once("value")
+                .then((snapshot) =>
+                {
+                    const variableninhalt = snapshot.val();
+                    resolve(variableninhalt);
+                    console.log(`LESEN: ${Pfad}`);
+                })
+                .catch((error) =>
+                {
+                    console.log("Fehler beim Lesen der Daten:", error.message);
+                    reject(error);
+                });
+        });
+    }
+
+    function SetVariable(Pfad, neuerWert)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            dataRef.child(Pfad).set(neuerWert)
+                .then(() =>
+                {
+                    console.log(`Erfolgr.geschrieben '${Pfad}', '${neuerWert}'`);
+                    resolve();
+                })
+                .catch((error) =>
+                {
+                    console.log("Fehler beim Schreiben der Daten:", error.message);
+                    reject(error);
+                });
+        });
+    }
+
+    function GetSubvariablen(Pfad)
+    {
+        return new Promise((resolve, reject) => {
+            dataRef.child(Pfad).once("value")
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data && typeof data === "object") {
+                        const subVariablesList = Object.keys(data).map(subVar => `${Pfad}/${subVar}`);
+                        resolve(subVariablesList);
+                    } else {
+                        resolve([]);
+                    }
+                })
+                .catch((error) => {
+                    console.log("Fehler beim Lesen der Daten:", error.message);
+                    reject(error);
+                });
+        });
+    }
+
+    function formatDate(date)
+    {
+        if (!(date instanceof Date))
+        {
+            return "Ungültiges Datum";
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        const formattedDate = `${day}.${month}.${year}`;
+
+        return formattedDate;
+    }
+
+    function getZeitstempel()
+    {
+        return new Date().getTime();
+    }
+
+    function getFileName(path)
+    {
+        const segments = path.split('/');
+        return segments[segments.length - 1];
+    }
+
+    function setCookie(name, value)
+    {
+        var expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 30);
+
+        document.cookie = name + "=" + value + "; expires=" + expirationDate.toUTCString() + "; path=/";
+    }
+
+    function getCookie(name)
+    {
+        var cookieName = name + "=";
+        var cookies = document.cookie.split(';');
+
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+
+        return null;
+    }
+
+    function deleteCookie(name)
+    {
+        document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    function cookieExists(name)
+    {
+        return getCookie(name) !== null;
+    }
+</script>
+
+<body id="body" style="background-color: rgb(36, 36, 36); color: rgb(218, 218, 218); font-family: Chakra Petch, sans-serif; ">
+    <div class="container mt-5" id="AnmeldungFenster" style="display: none; text-align: center; width: 400px;"> 
+        <strong style="font-size: 35pt; color: rgb(255, 255, 255);">Anmelden</strong><br><br>
+        <label>Das Eingeben der Passphrase ist obligatorisch!</label>
+        <input type="password" class="form-control" id="PasswortTextBox" aria-describedby="basic-addon3" placeholder="Passphrase eingeben"><br>
+        <div class="checkbox-wrapper-4">
+            <input class="inp-cbx" id="AlsSchuelerAnmeldenCheckBox" onchange="" type="checkbox" checked/>
+            <label class="cbx" for="AlsSchuelerAnmeldenCheckBox">
+                <span>
+                    <svg width="12px" height="10px">
+                        <use xlink:href="#check-4"></use>
+                    </svg>
+                </span>
+                <span>Als Schüler anmelden</span>
+            </label>
+            <svg class="inline-svg">
+                <symbol id="check-4" viewbox="0 0 12 10">
+                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                </symbol>
+            </svg>
+        </div>
+        <button type="button" onclick="InitWebseite(document.getElementById('PasswortTextBox').value, e('AlsSchuelerAnmeldenCheckBox').checked)" class="btn btn-primary">Anmelden</button>
+    </div>
+
+    <div class="container mt-5" id="AnmeldungFehlgeschlagen" style="display: none; text-align: center;"> 
+        <strong style="font-size: 25pt; color: rgb(255, 255, 255);">Authentifizierung<br>fehlgeschlagen</strong><br><br>
+        <button type="button" onclick="Abmelden(); location.reload()" class="btn btn-danger">Erneut versuchen</button>
+    </div>
+
+    <div class="container mt-5" id="HochladenSeite" style="display: none; text-align: center;">
+
+        <strong style="padding: 30px; font-size: xx-large;">Neuen Test hochladen</strong><br><br>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="FachTextBox">Prüfungsgebiet</label>
+            </div>
+            <select class="custom-select" id="FachTextBox">
+                <option value="AM">AM</option>
+                <option value="NW">NW</option>
+                <option value="MEEM">MEEM</option>
+                <option value="ETE">ETE</option>
+                <option value="MTSA">MTSA</option>
+                <option value="AIIT">AIIT</option>
+                <option value="E">E</option>
+            </select>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Datum</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="DatumTextBox">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Punkte gesamt</span>
+            </div>
+            <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="PunkteTextBox">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Prüfungsthema</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="ThemaTextBox">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Link URL zum Test</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="LinkTextBox">
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Test Dateiname ohne Endung</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="TestDateinameTextBox">
+        </div>
+        <br><br>
+
+        <button type="button" class="btn btn-danger" onclick="Abmelden()">Abmelden</button>&nbsp;<button type="button" class="btn btn-secondary" onclick="NeuenTestSpeichern()">Speichern</button>
+    </div>
+
+    <div id="GesamteWebseite" style="display: none;">
+        <div style="width: 100%; background-color: rgb(134, 31, 2); padding: 15px; border: 1px solid rgb(41, 41, 41);">
+            <img src="https://cdn-icons-png.flaticon.com/512/326/326909.png" style="width: 40px; margin-right: 10px;" onclick="Abmelden()"><strong style="font-size: x-large;" id="Gesamtueberschrift">UntM Prüfungssammlung (Prüfungsfundus)</strong>            
+        </div>
+
+        <div style="display: flex; height: 100vh; flex-direction:row;" id="FlowLayoutPanel">
+            <div style="flex: 0 0 350px; padding: 15px; height: 100vh; background-color: rgb(70, 70, 70); border: 1px solid rgb(41, 41, 41);" id="SpalteFaecher">
+                <strong style="font-size: x-large;">Prüfungsgebiete</strong>
+                <hr style="background-color: white;">
+
+                <div class="Pruefungsfach" id="AM" onclick="FachAktivieren('AM')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Angewandte Mathemaik (AM)
+                </div>
+                <div class="Pruefungsfach" id="NW" onclick="FachAktivieren('NW')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Naturwissenschaften (NW)
+                </div>
+                <div class="Pruefungsfach" id="MEEM" onclick="FachAktivieren('MEEM')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Mechanik (MEEM)
+                </div>
+                <div class="Pruefungsfach" id="ETE" onclick="FachAktivieren('ETE')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Elektrotechnik (ETE)
+                </div>
+                <div class="Pruefungsfach" id="MTSA" onclick="FachAktivieren('MTSA')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Mechatronische Systeme (MTSA)
+                </div>
+                <div class="Pruefungsfach" id="AIIT" onclick="FachAktivieren('AIIT')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Informatik (AIIT)
+                </div>       
+                <div class="Pruefungsfach" id="E" onclick="FachAktivieren('E')">
+                    <img src="https://i.imgur.com/bSqOxpF.png" style="width: 25px; margin-right: 10px;">Englisch (E)
+                </div>               
+            </div>
+
+            <div style="flex: 1; padding: 15px; height: 100vh; background-color: rgb(199, 199, 199); color: rgb(40, 40, 40); border: 1px solid rgb(41, 41, 41);" id="SpalteTeste">                
+                <strong style="font-size: x-large;" id="PruefungenUeberschrift">UntM Prüfungen</strong>
+                <hr style="background-color: rgb(39, 39, 39);">
+
+                <div id="AuflistungTeste" style="overflow-y: auto;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4317/4317909.png" style="width: 60px; margin-right: 10px;">Prüfungsgebiet auswählen<br>
+                </div>
+            </div>            
+        </div>   
+
+               
+    </div>
+
+</body>
+</html>
+
+<script>
+    var AktuellerFachname = ""
+
+    function FachAktivieren(Fachname)
+    {
+        AM.classList.remove('ausgewaehlt')
+        NW.classList.remove('ausgewaehlt')
+        MEEM.classList.remove('ausgewaehlt')
+        ETE.classList.remove('ausgewaehlt')
+        MTSA.classList.remove('ausgewaehlt')
+        AIIT.classList.remove('ausgewaehlt')
+        E.classList.remove('ausgewaehlt')
+
+        AktuellerFachname = Fachname
+        e(Fachname).classList.add('ausgewaehlt')
+
+        PruefungenUeberschrift.innerHTML = `Prüfungen in ${Fachname}`
+
+        AuflistungTesteAktualisieren();
+    }
+
+    function AuflistungTesteAktualisieren()
+    {
+        (async () =>
+        {                 
+            AuflistungTeste.innerHTML = "Wird geladen ..."
+            var AlleTeste = Object.entries(await GetVariable(`Pruefungsfundus`))
+            AuflistungTeste.innerHTML = ""
+
+            for (var [Fach, Teste] of AlleTeste)
+            {
+                console.log(Fach);
+                console.log(AktuellerFachname);
+                if(Fach == AktuellerFachname)
+                {
+                    for (var [TestName, TestObjekt] of Object.entries(Teste))
+                    {
+                        e("AuflistungTeste").innerHTML += `
+                        <div>
+                            <strong>Prüfung vom ${TestObjekt.Datum}:</strong><br>
+                            Thema: "${TestObjekt.Thema}"<br>Punkte: [${TestObjekt.Punkte} Punkte]
+                            <div class="Test mt-2" onClick="location.href = '${TestObjekt.Link}'">
+                                <img src="https://i.imgur.com/TSR8UzZ.png" style="width: 25px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);"><u>${TestName}.pdf</u></strong>
+                            </div>
+                            <hr style="background-color: rgb(39, 39, 39);">
+                        </div> `
+                    }
+                }
+            }
+
+            if(AuflistungTeste.innerHTML == "")
+            {
+                AuflistungTeste.innerHTML = '<img src="https://cdn1.iconfinder.com/data/icons/cursor-pointers/24/10-512.png" style="width: 40px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);">Zurzeit ist hier (noch) kein Inhalt</strong>'
+            }
+        })()
+    }
+
+    function WindowResizeEvent()
+    {
+        if(window.innerWidth < 720)
+        { //Handy
+            e("FlowLayoutPanel").style.flexDirection = "column"
+            e("Gesamtueberschrift").innerHTML = "UntM Prüfungsfundus"
+            
+            e("FlowLayoutPanel").style.height = ""
+
+            e("SpalteFaecher").style.height = ""
+            e("SpalteTeste").style.height = ""
+
+            e("AuflistungTeste").style.height = ""
+            e("AuflistungTeste").style.overflowY = "auto"
+        }
+        else
+        { //Computer || Tablet
+            e("FlowLayoutPanel").style.flexDirection = "row"
+            e("Gesamtueberschrift").innerHTML = "UntM Prüfungssammlung (Prüfungsfundus)"
+
+            var Hoehe = "calc(100vh - 74px)"
+            e("FlowLayoutPanel").style.height = Hoehe
+            e("SpalteFaecher").style.height = Hoehe
+            e("SpalteTeste").style.height = Hoehe
+
+            e("AuflistungTeste").style.height = "calc(100vh - 180px)"
+            e("AuflistungTeste").style.overflowY = "scroll"
+        }
+    }
+
+    function Abmelden()
+    {
+        deleteCookie("PasswortPruefungsfundus")
+        deleteCookie("PruefungsfundusAlsSchuelerAnmelden")
+        location.reload();
+    }
+
+
+    function NeuenTestSpeichern()
+    {
+        (async () =>
+        {                 
+            var Fach = e('FachTextBox').value;
+            var Datum = e('DatumTextBox').value;
+            var Punkte = e('PunkteTextBox').value;
+            var Thema = e('ThemaTextBox').value;
+            var Link = e('LinkTextBox').value;
+            var Dateiname = e('TestDateinameTextBox').value;
+            
+            if(Fach && Datum && Punkte && Thema && Link && Dateiname)
+            {
+                await SetVariable(`Pruefungsfundus/${Fach}/${Dateiname}/Datum`, Datum);
+                await SetVariable(`Pruefungsfundus/${Fach}/${Dateiname}/Punkte`, Punkte);
+                await SetVariable(`Pruefungsfundus/${Fach}/${Dateiname}/Thema`, Thema);
+                await SetVariable(`Pruefungsfundus/${Fach}/${Dateiname}/Link`, Link);
+            }
+            else
+            {
+                alert('Fehlerhafte Eingaben!')
+            }
+
+            location.reload()
+        })()
+    }
+
+
+
+    
+
+    addEventListener("resize", (event) =>
+    {
+        WindowResizeEvent()
+    });
+</script>
+
+<style>
+    .Pruefungsfach
+    {
+        cursor: pointer;
+        border: 1px solid lightgray;
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 3px;
+        background-color: rgb(34, 34, 34);
+    }
+    .Pruefungsfach:hover
+    {
+        background-color: rgb(58, 58, 58);
+    }
+    .Pruefungsfach.ausgewaehlt
+    {
+        background-color: rgb(134, 31, 2);
+    }
+    
+    .Test
+    {
+        cursor: pointer;
+        border: 1px solid rgb(29, 29, 29);
+        border-radius: 3px;
+        padding: 10px;
+        width: 300px;
+        margin-bottom: 3px;
+        background-color: rgb(182, 182, 182);
+    }
+</style>
+
+<!-- General -->
+<script>
+    if(cookieExists("PasswortPruefungsfundus") && cookieExists("PruefungsfundusAlsSchuelerAnmelden"))
+    {
+        InitWebseite(getCookie("PasswortPruefungsfundus"), getCookie("PruefungsfundusAlsSchuelerAnmelden"))
+    }
+    else
+    {
+        document.getElementById("AnmeldungFenster").style.display = "block"
+    }
+
+    function Event_AnmeldungAbgeschlossen()
+    {
+        WindowResizeEvent()
+    }
+</script>
