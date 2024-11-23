@@ -515,6 +515,19 @@
                 {
                     for (var [TestName, TestObjekt] of Object.entries(Teste))
                     {
+
+                        var Schuelerantwort = ""                        
+
+                        if(TestObjekt.Schuelerantwort)
+                        {
+                            Schuelerantwort = `                 
+                            <div class="Test mt-2" onClick="location.href = '${TestObjekt.Schuelerantwort}'">
+                                <img src="https://i.imgur.com/TSR8UzZ.png" style="width: 25px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);"><u>Schülerantwort.pdf</u></strong>
+                            </div>
+                            `
+                        }
+                        
+
                         e("AuflistungTeste").innerHTML += `
                         <div>
                             <strong>Prüfung vom ${TestObjekt.Datum}:</strong><br>
@@ -522,6 +535,7 @@
                             <div class="Test mt-2" onClick="location.href = '${TestObjekt.Link}'">
                                 <img src="https://i.imgur.com/TSR8UzZ.png" style="width: 25px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);"><u>${TestName}.pdf</u></strong>
                             </div>
+                            ${Schuelerantwort}
                             <hr style="background-color: rgb(39, 39, 39);">
                         </div> `
                     }
