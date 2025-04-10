@@ -173,8 +173,6 @@
     {        
         var email = "";
 
-
-
         if(AlsSchuelerAnmeldenParameter.toString() == "true")
         {
             email = "pruefungsfundus@untmprivat.com"
@@ -203,6 +201,8 @@
             else
             {
                 document.getElementById("HochladenSeite").style.display = "block";
+
+                TestauflistungAdminMenueAktualisieren()
             }
                            
             document.getElementById("AnmeldungFehlgeschlagen").style.display = "none";
@@ -426,7 +426,17 @@
         </div>
         <br><br>
 
-        <button type="button" class="btn btn-danger" onclick="Abmelden()">Abmelden</button>&nbsp;<button type="button" class="btn btn-secondary" onclick="NeuenTestSpeichern()">Speichern</button>
+        <button type="button" class="btn btn-danger" onclick="Abmelden()">Abmelden</button>&nbsp;<button type="button" class="btn btn-success" onclick="NeuenTestSpeichern()">Speichern</button>
+    
+        <br><br><br>
+
+        <h4>Schülerantwort hinzufügen</h4>
+
+        <div id="TestauflistungAdminMenue">
+           
+        </div>
+    
+        <br><br><br><br><br><br><br><br><br><br><br><br>
     </div>
 
     <div id="GesamteWebseite" style="display: none;">
@@ -509,8 +519,6 @@
 
             for (var [Fach, Teste] of AlleTeste)
             {
-                console.log(Fach);
-                console.log(AktuellerFachname);
                 if(Fach == AktuellerFachname)
                 {
                     for (var [TestName, TestObjekt] of Object.entries(Teste))
@@ -586,6 +594,24 @@
         location.reload();
     }
 
+    function SchuelerantwortHinzufuegen(Ordnerpfad)
+    {
+        (async () =>
+        {                 
+            var Link = prompt("Link zur Schülerantwort?")
+
+            if(Ordnerpfad && Link)
+            {
+                await SetVariable(`${Ordnerpfad}/Schuelerantwort`, Link)
+
+                alert("Jawoll! Erledigt.")
+            }
+            else
+            {
+                alert("Fehlerhafte Eingabe!")
+            }
+        })()
+    }
 
     function NeuenTestSpeichern()
     {
@@ -614,7 +640,45 @@
         })()
     }
 
+    function TestauflistungAdminMenueAktualisieren()
+    {
+        (async () =>
+        {                
+            var TestauflistungAdminMenue = e("TestauflistungAdminMenue")
 
+            TestauflistungAdminMenue.innerHTML = "Wird geladen ..."
+            var AlleTeste = Object.entries(await GetVariable(`Pruefungsfundus`))
+            TestauflistungAdminMenue.innerHTML = ""
+
+            var AktuellesFach = ""
+
+            for (var [Fach, Teste] of AlleTeste)
+            {
+                console.log(Fach);
+
+
+                if(AktuellesFach != Fach)
+                {
+                    TestauflistungAdminMenue.innerHTML += `<strong style="font-size:larger"><br>${Fach}:</strong><br>`
+                    AktuellerFachname = Fach
+                }
+
+                
+                
+                for (var [TestName, TestObjekt] of Object.entries(Teste))
+                {
+                    
+                    TestauflistungAdminMenue.innerHTML += `                                        
+                    <a href="#" onclick="SchuelerantwortHinzufuegen('Pruefungsfundus/${Fach}/${TestName}')" class="badge badge-secondary">${TestName}</a><br>`
+                }
+            }
+
+            if(TestauflistungAdminMenue.innerHTML == "")
+            {
+                TestauflistungAdminMenue.innerHTML = '<img src="https://cdn1.iconfinder.com/data/icons/cursor-pointers/24/10-512.png" style="width: 40px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);">Zurzeit ist hier (noch) kein Inhalt</strong>'
+            }
+        })()
+    }
 
     
 
