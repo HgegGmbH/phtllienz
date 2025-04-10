@@ -529,23 +529,26 @@
                         if(TestObjekt.Schuelerantwort)
                         {
                             Schuelerantwort = `                 
-                            <div class="Test mt-2" onClick="location.href = '${TestObjekt.Schuelerantwort}'">
+                            <div class="Test mt-2" onClick="DateiOeffnen('${TestObjekt.Schuelerantwort}', true)">
                                 <img src="https://i.imgur.com/TSR8UzZ.png" style="width: 25px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);"><u>Schülerantwort.pdf</u></strong>
                             </div>
                             `
                         }
                         
-
+                        var OeffnenErlaubt = parseGermanDate(TestObjekt.Datum) <= new Date()
+                        
                         e("AuflistungTeste").innerHTML += `
                         <div>
                             <strong>Prüfung vom ${TestObjekt.Datum}:</strong><br>
                             Thema: "${TestObjekt.Thema}"<br>Punkte: [${TestObjekt.Punkte} Punkte]
-                            <div class="Test mt-2" onClick="location.href = '${TestObjekt.Link}'">
+                            <div class="Test mt-2" onClick="DateiOeffnen('${TestObjekt.Link}', ${OeffnenErlaubt})">
                                 <img src="https://i.imgur.com/TSR8UzZ.png" style="width: 25px; margin-right: 10px;"><strong style="color: rgb(134, 31, 2);"><u>${TestName}.pdf</u></strong>
                             </div>
                             ${Schuelerantwort}
                             <hr style="background-color: rgb(39, 39, 39);">
                         </div> `
+
+                        
                     }
                 }
             }
@@ -592,6 +595,23 @@
         deleteCookie("PasswortPruefungsfundus")
         deleteCookie("PruefungsfundusAlsSchuelerAnmelden")
         location.reload();
+    }
+
+    function parseGermanDate(dateString)
+    {
+        const [day, month, year] = dateString.split('.');
+        return new Date(year, month - 1, day);
+    }
+
+    function DateiOeffnen(Link, OeffnenErlaubt)
+    {
+        if(Link)
+        {
+            if(OeffnenErlaubt || prompt("Zugangsbeschränkung! - Passwort eingeben:") == "phtlgaul")
+            {
+                location.href = Link;
+            }
+        }
     }
 
     function SchuelerantwortHinzufuegen(Ordnerpfad)
